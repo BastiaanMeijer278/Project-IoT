@@ -1,0 +1,23 @@
+{% extends 'base.html' %} 
+{% block content %}
+{% for i in residence %}
+<br>
+<div class="jumbotron">
+    <div class="container">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <h5>{{ i }}</h5>
+                </div>
+                <div class="col-sm">
+                    Aanwezige dieren:
+                </div>
+                <div class="col-sm">
+                    <h4>Status is </h4>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+{% endfor %} 
+{% endblock %}
