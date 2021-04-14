@@ -4,17 +4,28 @@
 <br>
 <div class="jumbotron">
     <div class="container">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm">
-                    <h5>{{ i.name }}</h5>
-                </div>
-                <div class="col-sm">
-                    Aanwezige dieren:
-                </div>
-                <div class="col-sm">
-                    <h4>Status is </h4>
-                </div>
+        <div class="row">
+            <div class="col-sm">
+                <h4>{{ i.name }}</h5>
+                <br>
+            </div>
+            <div class="col-sm">
+                <h5 style="text-align: center;">Aanwezige dieren:</h5>
+                <br>
+                <ul class="list-group list-group-flush">
+                {% for j in list_of_animals[i.id] %}
+                <li class="list-group-item">{{ j.name }} <span style="font-style: italic;">{{ soorten[j.soort] }}</span></li>
+                {% endfor %} 
+                </ul>
+            </div>
+            <div class="col-sm" style="text-align: center;">
+                <h5>Status:</h5>
+                <br>
+                {% if alarm == True %} 
+                <img src="static/error-message.gif" width="60", height="60">
+                {% else %} 
+                <img src="static/checkmark.png" width="60", height="60">
+                {% endif %}
             </div>
         </div>
     </div>    
