@@ -1,25 +1,58 @@
-from flask_sqlalchemy import *
 from Webapplicatie import db
 
 class Verblijf(db.Model):
-    __tablename__ = 'Verblijf'
+
+    __tablename__ = "Verblijf"
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.Text)
-    dieren = db.relationship('Dier', backref='Verblijf')
+
     def __init__(self, name):
         self.name = name
 
-class Dier(db.Model):
-    __tablename__ = 'Dier'
+class Diersoort(db.Model):
+
+    __tablename__ = "Diersoort"
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.Text)
-    detected = db.Column(db.Boolean)
-    verblijf = db.Column(db.Integer, db.ForeignKey('Verblijf.id'))
-
     
 
+    def __init__(self, name):
+        self.name = name
+        
     
-class Sensor(db.Model):
+class Dier(db.Model):
+
+    __tablename__ = "Dier"
     id = db.Column(db.Integer, primary_key = True)
+    soort = db.Column(db.Integer, db.ForeignKey("Diersoort.id"))
+    name = db.Column(db.Text)
+    detected = db.Column(db.Boolean)
+    verblijf = db.Column(db.Integer,db.ForeignKey("Verblijf.id"))
+
+    def __init__(self, soort, name, detected, verblijf):
+        self.soort = Diersoort.query.filter_by(name=soort).first().id
+        self.name = name
+        self.detected = detected
+        self.verblijf = Verblijf.query.filter_by(name=verblijf).first().id
+
+class Sensor(db.Model):
+
+    __tablename__ = "Sensor"
+    id = db.Column(db.Integer, primary_key = True)
+    verblijf = db.Column(db.Integer, db.ForeignKey("Verblijf.id"))
+
+    def __init__(self, verblijf):
+        self.verblijf = verblijf
+
+class Data(db.Model):
+
+    __tablename__ = "Data"
+    id = db.Column(db.Integer, primary_key = True)
+    sensor = db.Column(db.Integer, db.ForeignKey("Sensor.id"))
+    dier = db.Column(db.Text,db.ForeignKey("Dier.id"))
     output = db.Column(db.Text)
-    dier = db.Column(db.Text)
+
+    def __init__(self, sensor, dier, output):
+        self.sensor = sensor
+        self.dier = dier
+        self.output = output
