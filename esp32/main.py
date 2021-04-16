@@ -1,8 +1,7 @@
-# if __name__ == "__main__" IS COMMENTED OUT.
 from machine import Pin
 import socket
 import time
-import bluetooth    # Ubluetooth
+import bluetooth
 from micropython import const
 import ubinascii
 
@@ -17,11 +16,11 @@ def do_connect(ssid, password):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     if not wlan.isconnected():
-        print('Connecting to network...')
+        print('connecting to network...')
         wlan.connect(ssid, password)
         while not wlan.isconnected():
             pass
-    print('Network config:', wlan.ifconfig())
+    print('network config:', wlan.ifconfig())
 
 
 class Bluetooth:
@@ -30,8 +29,8 @@ class Bluetooth:
         self.bt = bluetooth.BLE()
         # Changes the active state of the ble radio. (turns it on.)
         self.bt.active(True)
-
-        self.bt.irq(self.irq)   # Reference def irq().
+        # Reference def irq().
+        self.bt.irq(self.irq)
         # List of detected bluetooth devices.
         self.list_of_devices = []
         # Pin of the green led, D33
@@ -62,7 +61,7 @@ class Bluetooth:
         elif event == _IRQ_SCAN_DONE:
             # if scan done, pin 33 light off.
             self.red_led.value(0)
-
+    
     def scan(self):
         """ scan Scans for bluetooth devices."""
         # If scanning: pin 33 (red light) on.
@@ -80,7 +79,7 @@ class Detector:
         self.green_led = Pin(33, Pin.OUT)
         self.red_led = Pin(32, Pin.OUT)
         self.host = '192.168.137.1'
-        self.port = 8003
+        self.port = 7002
         self.state = False
 
     def scan(self):
@@ -98,44 +97,27 @@ class Detector:
             s += str(device)
         print(s)
         print(self.list_of_devices)
-        # time.sleep(5)
+        # Gives an error if put in __init__, so its here.
         self.socket = socket.socket()
         # Make a connection with the host.
         self.socket.connect((self.host, self.port))
         # if s is empty we get a timeout error, so we add filler text before sending s.
         try:
             if s == '':
-                self.green_led.value(1)
                 s = 'No Devices Found.'
-            else:
-                self.green_led.value(0)
-            # Send list of devices s to host.
+            # Send list of devices s to host, needs to be a string, not a list.
             self.socket.send(bytes(s, 'utf-8'))
         except OSError:
             if s == '':
-                self.green_led.value(1)
+                # self.green_led.value(1)
                 s = 'No Devices Found.'
-            else:
-                self.green_led.value(0)
-            # Send list of devices s to host.
+            # Send list of devices s to host, needs to be a string, not a list.
             self.socket.send(bytes(s, 'utf-8'))
-        # Closes the connection to the host.
+        # Socket needs to be closed and reopened for it to receive/send data again.
         self.socket.close()
+        # Empty list_of_devices so it can be filled by the scan again.
         self.list_of_devices = []
         print('Done!')
-
-    # def receive(self):
-    #     print('AAI')
-    #     code = self.socket.recv(1024)
-    #     code = code.decode('utf-8')
-    #     if code == 'alarm':
-    #         self.green_led.value(0)
-    #         self.state = True
-    #         self.alarm()
-    #         self.socket.close()
-    #     else:
-    #         self.stop_alarm()
-    #         self.socket.close()
 
     def start(self):
         while True:
@@ -143,28 +125,9 @@ class Detector:
             time.sleep(10)
             self.send()
             time.sleep(1)
-            # self.receive()
-
-    def alarm(self):
-        # Can get stuck in an endless loop, DO NOT USE YET.
-        while self.state:
-            self.red_led.value(1)
-            time.sleep(0.5)
-            self.red_led.value(0)
-            time.sleep(0.5)
-            # self.receive()
-    
-    def stop_alarm(self):
-        # Used to stop the alarm by turning state to false, not added to alarm so DO NOT USE ALARM() YET.
-        self.state = False
-        self.green_led.value(1)
 
 
-"""if __name__ == '__main__':
-    # Make a wifi connection
+def main():
     do_connect('ESPHotSpot', 'Welkom01!')
-    # Create Detector1, a Detector Class thingy.
     Detector1 = Detector()
-    # Run the start method of the Detector Class.
     Detector1.start()
-"""
