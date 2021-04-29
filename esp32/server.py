@@ -7,7 +7,7 @@ class Server:
         self.port = 7002
         self.host = '192.168.137.1'
         self.list_of_animals = list_of_animals
-        self.list_of_devices = ''
+        self.list_of_devices = []
         self.last_message = ''
         self.conn = ''
         self.escaped = {}

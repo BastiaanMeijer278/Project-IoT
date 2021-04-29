@@ -120,14 +120,14 @@ class Detector:
         print('Done!')
 
     def start(self):
-        while True:
-            self.scan()
-            time.sleep(10)
-            self.send()
-            time.sleep(1)
+        self.scan()
+        time.sleep(10)
+        self.send()
+        time.sleep(1)
 
 
 def main():
     do_connect('ESPHotSpot', 'Welkom01!')
-    Detector1 = Detector()
-    Detector1.start()
+    while True:
+        Detector1 = Detector()
+        Detector1.start()
